@@ -1,0 +1,74 @@
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.1.1'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.personalassistant'
+version = '0.0.1-SNAPSHOT'
+description = 'personal-assistant'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-flyway'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.flywaydb:flyway-database-postgresql'
+    runtimeOnly 'org.postgresql:postgresql'
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-flyway-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+// Load variables from .env in the project root
+def dotenv = [:]
+def envFile = rootProject.file('.env')
+
+if (envFile.exists()) {
+    envFile.eachLine { line ->
+        def trimmed = line.trim()
+
+        if (trimmed && !trimmed.startsWith('#')) {
+            int separator = trimmed.indexOf('=')
+
+            if (separator > 0) {
+                def key = trimmed.substring(0, separator).trim()
+                def value = trimmed.substring(separator + 1).trim()
+
+                if (value.length() >= 2 &&
+                        ((value.startsWith('"') && value.endsWith('"')) ||
+                                (value.startsWith("'") && value.endsWith("'")))) {
+                    value = value.substring(1, value.length() - 1)
+                }
+
+                dotenv[key] = value
+            }
+        }
+    }
+}
+
+// Pass .env variables to tests and Java application tasks
+tasks.withType(Test).configureEach {
+    environment(dotenv)
+}
+
+tasks.withType(JavaExec).configureEach {
+    environment(dotenv)
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
