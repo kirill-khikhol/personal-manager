@@ -1,8 +1,10 @@
 package com.personalassistant.user.infrastructure.api;
 
 import com.personalassistant.user.application.usecase.GetUserProfileUseCase;
+import com.personalassistant.user.application.usecase.UpdateUserProfileUseCase;
 import com.personalassistant.user.infrastructure.UserProfileMapper;
 import com.personalassistant.user.infrastructure.api.dto.CreateUserProfileRequest;
+import com.personalassistant.user.infrastructure.api.dto.UpdateUserProfileRequest;
 import com.personalassistant.user.infrastructure.api.dto.UserProfileResponse;
 import com.personalassistant.user.application.usecase.CreateUserProfileUseCase;
 import jakarta.validation.Valid;
@@ -18,15 +20,18 @@ public class UserProfileController {
 
     private final CreateUserProfileUseCase createUserProfileService;
     private final GetUserProfileUseCase getUserProfileService;
+    private final UpdateUserProfileUseCase updateUserProfileUseCase;
     private final UserProfileMapper mapper;
 
     public UserProfileController(
             CreateUserProfileUseCase createUserProfileService,
             GetUserProfileUseCase getUserProfileService,
+            UpdateUserProfileUseCase updateUserProfileUseCase,
             UserProfileMapper mapper
     ) {
         this.createUserProfileService = createUserProfileService;
         this.getUserProfileService = getUserProfileService;
+        this.updateUserProfileUseCase = updateUserProfileUseCase;
         this.mapper = mapper;
     }
 
@@ -51,5 +56,23 @@ public class UserProfileController {
                         request.preferredLanguage()
                 )
         );
+    }
+
+    @PutMapping("/profile")
+    public UserProfileResponse update(
+            @RequestParam UUID id,
+            @Valid @RequestBody UpdateUserProfileRequest request
+    ) {
+        return updateUserProfileUseCase.execute(
+                        id,
+                        request.timeZone(),
+                        request.preferredLanguage()
+                )
+                .map(mapper::toResponse)
+                .orElseThrow(() -> new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "User profile not found"
+                        )
+                );
     }
 }

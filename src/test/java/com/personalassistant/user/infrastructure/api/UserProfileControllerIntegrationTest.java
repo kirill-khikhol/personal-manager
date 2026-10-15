@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -113,4 +114,57 @@ class UserProfileControllerIntegrationTest {
                 .andExpect(jsonPath("$.code").value("NOT_FOUND"))
                 .andExpect(jsonPath("$.status").value(404));
     }
+
+
+    @Test
+    void shouldUpdateExistingUserProfile() throws Exception {
+        String createRequest = """
+            {
+                "timeZone": "Asia/Jerusalem",
+                "preferredLanguage": "ru"
+            }
+            """;
+
+        String createdResponse = mockMvc.perform(
+                        post("/api/users/profile")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(createRequest)
+                )
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        String id = objectMapper.readTree(createdResponse)
+                .get("id")
+                .asText();
+
+        String updateRequest = """
+            {
+                "timeZone": "Europe/London",
+                "preferredLanguage": "en"
+            }
+            """;
+
+        mockMvc.perform(
+                        put("/api/users/profile")
+                                .param("id", id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(updateRequest)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.timeZone").value("Europe/London"))
+                .andExpect(jsonPath("$.preferredLanguage").value("en"));
+
+        mockMvc.perform(
+                        get("/api/users/profile")
+                                .param("id", id)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.timeZone").value("Europe/London"))
+                .andExpect(jsonPath("$.preferredLanguage").value("en"));
+    }
+
 }
