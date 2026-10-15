@@ -167,4 +167,27 @@ class UserProfileControllerIntegrationTest {
                 .andExpect(jsonPath("$.preferredLanguage").value("en"));
     }
 
+    @Test
+    void shouldReturnNotFoundWhenUpdatingMissingProfile() throws Exception {
+        String request = """
+            {
+                "timeZone": "Europe/London",
+                "preferredLanguage": "en"
+            }
+            """;
+
+        mockMvc.perform(
+                        put("/api/users/profile")
+                                .param(
+                                        "id",
+                                        "00000000-0000-0000-0000-000000000001"
+                                )
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(request)
+                )
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.status").value(404));
+    }
+
 }
