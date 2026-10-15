@@ -1,12 +1,12 @@
 package com.personalassistant.user.infrastructure.persistence;
 
 import com.personalassistant.user.application.port.UserProfileRepository;
+import com.personalassistant.user.domain.UserId;
 import com.personalassistant.user.domain.UserProfile;
 import com.personalassistant.user.infrastructure.UserProfileMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
 public class UserProfileRepositoryAdapter
@@ -24,8 +24,8 @@ public class UserProfileRepositoryAdapter
     }
 
     @Override
-    public Optional<UserProfile> findById(UUID id) {
-        return jpaRepository.findById(id)
+    public Optional<UserProfile> findById(UserId id) {
+        return jpaRepository.findById(id.value())
                 .map(mapper::toDomain);
     }
 

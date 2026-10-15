@@ -2,6 +2,7 @@
 package com.personalassistant.user.application.usecase;
 
 import com.personalassistant.user.application.port.UserProfileRepository;
+import com.personalassistant.user.domain.UserId;
 import com.personalassistant.user.domain.UserProfile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,7 +11,6 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class UpdateUserProfileUseCase {
@@ -23,7 +23,7 @@ public class UpdateUserProfileUseCase {
 
     @Transactional
     public Optional<UserProfile> execute(
-            UUID id,
+            UserId id,
             String timeZone,
             String preferredLanguage
     ) {

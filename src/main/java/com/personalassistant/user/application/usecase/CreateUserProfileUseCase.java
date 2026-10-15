@@ -1,6 +1,7 @@
 package com.personalassistant.user.application.usecase;
 
 import com.personalassistant.user.application.port.UserProfileRepository;
+import com.personalassistant.user.domain.UserId;
 import com.personalassistant.user.domain.UserProfile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.Locale;
-import java.util.UUID;
 
 @Service
 public class CreateUserProfileUseCase {
@@ -29,7 +29,7 @@ public class CreateUserProfileUseCase {
         Instant now = Instant.now();
 
         UserProfile profile = new UserProfile(
-                UUID.randomUUID(),
+                UserId.generate(),
                 timeZone,
                 normalizedLanguage,
                 now,

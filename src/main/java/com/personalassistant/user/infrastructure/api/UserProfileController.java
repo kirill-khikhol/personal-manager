@@ -2,6 +2,7 @@ package com.personalassistant.user.infrastructure.api;
 
 import com.personalassistant.user.application.usecase.GetUserProfileUseCase;
 import com.personalassistant.user.application.usecase.UpdateUserProfileUseCase;
+import com.personalassistant.user.domain.UserId;
 import com.personalassistant.user.infrastructure.UserProfileMapper;
 import com.personalassistant.user.infrastructure.api.dto.CreateUserProfileRequest;
 import com.personalassistant.user.infrastructure.api.dto.UpdateUserProfileRequest;
@@ -37,7 +38,7 @@ public class UserProfileController {
 
     @GetMapping("/profile")
     public UserProfileResponse getById(@RequestParam UUID id) {
-        return getUserProfileService.execute(id)
+        return getUserProfileService.execute(new UserId(id))
                 .map(mapper::toResponse)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
@@ -64,7 +65,7 @@ public class UserProfileController {
             @Valid @RequestBody UpdateUserProfileRequest request
     ) {
         return updateUserProfileUseCase.execute(
-                        id,
+                        new UserId(id),
                         request.timeZone(),
                         request.preferredLanguage()
                 )

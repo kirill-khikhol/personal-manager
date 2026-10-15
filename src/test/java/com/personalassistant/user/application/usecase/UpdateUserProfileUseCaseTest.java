@@ -2,6 +2,7 @@
 package com.personalassistant.user.application.usecase;
 
 import com.personalassistant.user.application.port.UserProfileRepository;
+import com.personalassistant.user.domain.UserId;
 import com.personalassistant.user.domain.UserProfile;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.DateTimeException;
 import java.time.Instant;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -29,7 +29,7 @@ class UpdateUserProfileUseCaseTest {
 
     @Test
     void shouldUpdateExistingProfile() {
-        UUID id = UUID.randomUUID();
+        UserId id = UserId.generate();
         Instant createdAt = Instant.parse("2025-01-01T10:00:00Z");
         Instant oldUpdatedAt = Instant.parse("2025-01-02T10:00:00Z");
 
@@ -70,7 +70,7 @@ class UpdateUserProfileUseCaseTest {
 
     @Test
     void shouldNotSaveWhenProfileDoesNotExist() {
-        UUID id = UUID.randomUUID();
+        UserId id = UserId.generate();
 
         when(repository.findById(id))
                 .thenReturn(Optional.empty());
@@ -92,7 +92,7 @@ class UpdateUserProfileUseCaseTest {
         assertThrows(
                 DateTimeException.class,
                 () -> useCase.execute(
-                        UUID.randomUUID(),
+                        UserId.generate(),
                         "Invalid/Zone",
                         "en"
                 )

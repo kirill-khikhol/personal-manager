@@ -1,6 +1,7 @@
 package com.personalassistant.user.application.usecase;
 
 import com.personalassistant.user.application.port.UserProfileRepository;
+import com.personalassistant.user.domain.UserId;
 import com.personalassistant.user.domain.UserProfile;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,10 +11,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
 import java.util.Optional;
-import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class GetUserProfileUseCaseTest {
@@ -25,7 +27,7 @@ public class GetUserProfileUseCaseTest {
 
     @Test
     void shouldReturnProfileWhenItExists() {
-        UUID id = UUID.randomUUID();
+        UserId id = UserId.generate();
         Instant now = Instant.now();
 
         UserProfile profile = new UserProfile(
@@ -49,7 +51,7 @@ public class GetUserProfileUseCaseTest {
 
     @Test
     void shouldReturnEmptyWhenProfileDoesNotExist() {
-        UUID id = UUID.randomUUID();
+        UserId id = UserId.generate();
 
         when(repository.findById(id))
                 .thenReturn(Optional.empty());

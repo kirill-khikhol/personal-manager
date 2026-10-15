@@ -2,18 +2,17 @@ package com.personalassistant.user.domain;
 
 import java.time.Instant;
 import java.util.Objects;
-import java.util.UUID;
 
 public class UserProfile {
 
-    private final UUID id;
+    private final UserId id;
     private final String timeZone;
     private final String preferredLanguage;
     private final Instant createdAt;
     private final Instant updatedAt;
 
     public UserProfile(
-            UUID id,
+            UserId id,
             String timeZone,
             String preferredLanguage,
             Instant createdAt,
@@ -39,7 +38,7 @@ public class UserProfile {
         return value;
     }
 
-    public UUID getId() {
+    public UserId getId() {
         return id;
     }
 
