@@ -27,21 +27,21 @@ class ActivityTest {
         assertNull(activity.getParentId());
         assertEquals("Java preparation", activity.getName());
         assertEquals(ActivityStatus.ACTIVE, activity.getStatus());
-        assertEquals(0.0, activity.getProgress());
+        assertEquals(0.0, activity.getManualProgress());
         assertEquals(1.0, activity.getWeight());
     }
 
     @Test
     void setProgress_shouldAcceptValuesWithinRange() {
-        activity.setProgress(42.5);
+        activity.setManualProgress(42.5);
 
-        assertEquals(42.5, activity.getProgress());
+        assertEquals(42.5, activity.getManualProgress());
 
-        activity.setProgress(100.0);
-        assertEquals(100.0, activity.getProgress());
+        activity.setManualProgress(100.0);
+        assertEquals(100.0, activity.getManualProgress());
 
-        activity.setProgress(0.0);
-        assertEquals(0.0, activity.getProgress());
+        activity.setManualProgress(0.0);
+        assertEquals(0.0, activity.getManualProgress());
     }
 
     @Test
@@ -49,19 +49,19 @@ class ActivityTest {
         assertAll(
                 () -> assertThrows(
                         IllegalArgumentException.class,
-                        () -> activity.setProgress(-0.1)
+                        () -> activity.setManualProgress(-0.1)
                 ),
                 () -> assertThrows(
                         IllegalArgumentException.class,
-                        () -> activity.setProgress(100.1)
+                        () -> activity.setManualProgress(100.1)
                 ),
                 () -> assertThrows(
                         IllegalArgumentException.class,
-                        () -> activity.setProgress(Double.NaN)
+                        () -> activity.setManualProgress(Double.NaN)
                 ),
                 () -> assertThrows(
                         IllegalArgumentException.class,
-                        () -> activity.setProgress(Double.POSITIVE_INFINITY)
+                        () -> activity.setManualProgress(Double.POSITIVE_INFINITY)
                 )
         );
     }
@@ -90,17 +90,17 @@ class ActivityTest {
 
     @Test
     void pauseAndResume_shouldChangeStatusWithoutChangingProgress() {
-        activity.setProgress(35.5);
+        activity.setManualProgress(35.5);
 
         activity.pause();
 
         assertEquals(ActivityStatus.PAUSED, activity.getStatus());
-        assertEquals(35.5, activity.getProgress());
+        assertEquals(35.5, activity.getManualProgress());
 
         activity.resume();
 
         assertEquals(ActivityStatus.ACTIVE, activity.getStatus());
-        assertEquals(35.5, activity.getProgress());
+        assertEquals(35.5, activity.getManualProgress());
     }
 
     @Test
@@ -109,13 +109,13 @@ class ActivityTest {
     }
 
     @Test
-    void complete_shouldSetStatusAndProgressToOneHundred() {
-        activity.setProgress(65.0);
+    void complete_shouldSetStatusWithoutChangingManualProgress() {
+        activity.setManualProgress(65.0);
 
         activity.complete();
 
         assertEquals(ActivityStatus.COMPLETED, activity.getStatus());
-        assertEquals(100.0, activity.getProgress());
+        assertEquals(65.0, activity.getManualProgress());
     }
 
     @Test

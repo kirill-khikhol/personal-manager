@@ -13,7 +13,7 @@ public class Activity {
     private String name;
     private String description;
     private ActivityStatus status;
-    private double progress;
+    private double manualProgress;
     private double weight;
 
     public Activity(
@@ -23,7 +23,7 @@ public class Activity {
             String name,
             String description,
             ActivityStatus status,
-            double progress,
+            double manualProgress,
             double weight
     ) {
         this.id = Objects.requireNonNull(id, "Activity id must not be null");
@@ -36,7 +36,7 @@ public class Activity {
                 status, "Activity status must not be null"
         );
 
-        setProgress(progress);
+        setManualProgress(manualProgress);
         setWeight(weight);
     }
 
@@ -91,21 +91,20 @@ public class Activity {
         }
 
         status = ActivityStatus.COMPLETED;
-        progress = 100.0;
     }
 
     public void archive() {
         status = ActivityStatus.ARCHIVED;
     }
 
-    public void setProgress(double progress) {
+    public void setManualProgress(double progress) {
         if (!Double.isFinite(progress) || progress < 0.0 || progress > 100.0) {
             throw new IllegalArgumentException(
                     "Progress must be finite and between 0 and 100"
             );
         }
 
-        this.progress = progress;
+        this.manualProgress = progress;
     }
 
     public void setWeight(double weight) {
@@ -133,6 +132,18 @@ public class Activity {
         this.description = description;
     }
 
+    void reactivateFromTree() {
+        if (status == ActivityStatus.COMPLETED) {
+            status = ActivityStatus.ACTIVE;
+        }
+    }
+
+    void pauseFromTree() {
+        if (status == ActivityStatus.ARCHIVED) {
+            status = ActivityStatus.PAUSED;
+        }
+    }
+
     public ActivityId getId() {
         return id;
     }
@@ -157,8 +168,8 @@ public class Activity {
         return status;
     }
 
-    public double getProgress() {
-        return progress;
+    public double getManualProgress() {
+        return manualProgress;
     }
 
     public double getWeight() {
